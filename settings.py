@@ -28,6 +28,7 @@ aldryn_addons.settings.load(locals())
 
 INSTALLED_APPS.extend([
 	'django_extensions',
+	'analytical',
     # add you project specific apps here
 ])
 
@@ -45,8 +46,10 @@ AUTHENTICATION_BACKENDS = (
 
     )
 
+CMS_PERMISSION = True
+
 import ldap
-from django_auth_ldap.config import LDAPSearch, GroupOfNamesType
+from django_auth_ldap.config import LDAPSearch, PosixGroupType 
 
 AUTH_LDAP_SERVER_URI = "ldap://172.17.0.2"
 
@@ -67,3 +70,19 @@ AUTH_LDAP_USER_ATTR_MAP = {
 
 CAMO_URI = ''
 
+AUTH_LDAP_GROUP_SEARCH = LDAPSearch("ou=groups,dc=example,dc=org",
+    ldap.SCOPE_SUBTREE, "(ObjectClass=PosixGroup)")
+
+AUTH_LDAP_GROUP_TYPE = PosixGroupType(name_attr='cn')
+
+AUTH_LDAP_USER_FLAGS_BY_GROUP = {
+	"is_staff": ["cn=staff,ou=people,dc=example,dc=org", "cn=admin,ou=people,dc=example,dc=org"],
+	"is_superuser": ["cn=admin,ou=people,dc=example,dc=org", "cn=staff,ou=people,dc=example,dc=org"]
+}
+
+AUTH_LDAP_FIND_GROUP_PERMS= True
+
+
+PIWIK_DOMAIN_PATH = '0.0.0.0/piwik'
+PIWIK_SITE_ID = '1'
+PIWIK_ANALYTICAL_INTERNAL_IPS = ['192.168.1.1']

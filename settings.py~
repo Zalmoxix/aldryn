@@ -41,12 +41,14 @@ MIDDLEWARE_CLASSES.extend([
 
 AUTHENTICATION_BACKENDS = (
                  'django_auth_ldap.backend.LDAPBackend',
-   		 'django.contrib.auth.backends.ModelBackend'
+ #  		 'django.contrib.auth.backends.ModelBackend'
 
     )
 
+CMS_PERMISSIONS = True
+
 import ldap
-from django_auth_ldap.config import LDAPSearch, GroupOfNamesType
+from django_auth_ldap.config import LDAPSearch, PosixGroupType 
 
 AUTH_LDAP_SERVER_URI = "ldap://172.17.0.2"
 
@@ -66,4 +68,17 @@ AUTH_LDAP_USER_ATTR_MAP = {
 }
 
 CAMO_URI = ''
+
+AUTH_LDAP_GROUP_SEARCH = LDAPSearch("ou=groups,dc=example,dc=org",
+    ldap.SCOPE_SUBTREE, "(ObjectClass=PosixGroup)")
+
+AUTH_LDAP_GROUP_TYPE = PosixGroupType(name_attr='cn')
+
+AUTH_LDAP_USER_FLAGS_BY_GROUP = {
+	"is_staff": ["cn=staff,ou=people,dc=example,dc=org", "cn=admin,ou=people,dc=example,dc=org"],
+	"is_superuser": ["cn=admin,ou=people,dc=example,dc=org", "cn=staff,ou=people,dc=example,dc=org"]
+}
+
+AUTH_LDAP_FIND_GROUP_PERMS= True
+
 
